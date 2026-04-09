@@ -18,24 +18,24 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto Mono', monospace; }
-        body { background-color: var(--bg-main); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background-color: var(--bg-main); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
         /* Header */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); height: 60px; }
-        .header-left { display: flex; align-items: center; gap: 20px; }
-        .title { font-size: 18px; font-weight: 700; color: #fCD535;}
-        .header-center { display: flex; gap: 15px; }
-        .badge { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; border: 1px solid;}
+        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); height: 60px; flex-shrink: 0;}
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .title { font-size: 16px; font-weight: 700; color: #fCD535;}
+        .header-center { display: flex; gap: 10px; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; border: 1px solid;}
         
         /* Main Layout */
-        .main-container { display: flex; flex: 1; height: calc(100vh - 60px); }
+        .main-container { display: flex; flex: 1; flex-direction: row; overflow: hidden; }
         
         /* Left Panel */
-        .left-panel { width: 260px; padding: 15px; display: flex; flex-direction: column; gap: 15px; border-right: 1px solid var(--border-color); background: var(--bg-main); overflow-y: auto;}
+        .left-panel { width: 250px; padding: 15px; display: flex; flex-direction: column; gap: 15px; border-right: 1px solid var(--border-color); background: var(--bg-main); overflow-y: auto; flex-shrink: 0;}
         .timer-box { text-align: center; background: var(--bg-panel); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);}
         .timer-box .label { font-size: 11px; color: var(--text-muted); }
-        .timer-box .value { font-size: 18px; font-weight: bold; margin-top: 5px; color: #fff; }
-        .timer-box .countdown { font-size: 28px; font-weight: bold; color: var(--color-up); margin-top: 5px; }
+        .timer-box .value { font-size: 16px; font-weight: bold; margin-top: 5px; color: #fff; }
+        .timer-box .countdown { font-size: 26px; font-weight: bold; color: var(--color-up); margin-top: 5px; }
         
         .info-card { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
         .info-card h4 { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;}
@@ -47,15 +47,15 @@
         .neutral-text { color: var(--text-muted) !important; }
 
         /* Chart Area */
-        .chart-container { flex: 1; position: relative; }
+        .chart-container { flex: 1; position: relative; min-width: 0; min-height: 300px; }
         #tvChart { position: absolute; width: 100%; height: 100%; }
 
         /* Right Panel */
-        .right-panel { width: 320px; background: var(--bg-panel); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .right-panel { width: 300px; background: var(--bg-panel); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; flex-shrink: 0;}
         .stats-section { padding: 15px; border-bottom: 1px solid var(--border-color); }
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
         .stat-box { background: var(--bg-main); padding: 10px 5px; border-radius: 6px; border: 1px solid var(--border-color); }
-        .stat-box .val { font-size: 16px; font-weight: bold; margin-bottom: 3px; }
+        .stat-box .val { font-size: 14px; font-weight: bold; margin-bottom: 3px; }
         .stat-box .lbl { font-size: 9px; color: var(--text-muted); }
 
         .history-section { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -65,6 +65,17 @@
         .history-list::-webkit-scrollbar { width: 4px; }
         .history-list::-webkit-scrollbar-thumb { background: var(--border-color); }
         .history-row { display: grid; grid-template-columns: 2fr 1.5fr 1.5fr 1fr; padding: 10px 15px; font-size: 11px; border-bottom: 1px solid var(--border-color); align-items: center; }
+
+        /* Mobile Responsive Layout (Stack vertically on phones) */
+        @media (max-width: 800px) {
+            body { overflow-y: auto; }
+            .main-container { flex-direction: column; height: auto; overflow: visible; }
+            .left-panel { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); flex-direction: row; flex-wrap: wrap; justify-content: space-between; }
+            .left-panel > * { flex: 1; min-width: 45%; }
+            .chart-container { height: 400px; flex: none; }
+            .right-panel { width: 100%; border-left: none; border-top: 1px solid var(--border-color); }
+            .history-section { min-height: 400px; }
+        }
     </style>
 </head>
 <body>
@@ -89,7 +100,7 @@
             </div>
 
             <div class="info-card">
-                <h4>≡ TA SIGNALS (HTML LOGIC)</h4>
+                <h4>≡ TA SIGNALS</h4>
                 <div class="ta-row">
                     <span>S/R Logic</span>
                     <strong id="taSR">-</strong>
@@ -161,7 +172,10 @@
         current_prediction: { period: null, side: null, conf: 0, note: "Analyzing..." }
     };
 
+    // Use CORS Proxy to bypass GitHub Pages / Browser restrictions
     const API_URL = "https://draw.ar-lottery01.com/TrxWinGo/TrxWinGo_1M/GetHistoryIssuePage.json";
+    const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+    
     let chart, candleSeries;
     let processedCandles = [];
 
@@ -173,7 +187,7 @@
             grid: { vertLines: { color: '#1f2933' }, horzLines: { color: '#1f2933' } },
             crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
             rightPriceScale: { borderColor: '#2b3139' },
-            timeScale: { borderColor: '#2b3139', timeVisible: true }
+            timeScale: { borderColor: '#2b3139', timeVisible: false, rightOffset: 12 } // Hide default time labels
         });
         candleSeries = chart.addCandlestickSeries({
             upColor: '#0ecb81', downColor: '#f6465d',
@@ -183,7 +197,7 @@
         new ResizeObserver(() => chart.resize(wrap.clientWidth, wrap.clientHeight)).observe(wrap);
     }
 
-    // --- 1. CANDLE BUILDER (FROM PYTHON logic) ---
+    // --- 1. CANDLE BUILDER ---
     function buildCandles(dataList) {
         const sorted = dataList.slice().sort((a, b) => parseInt(a.issueNumber) - parseInt(b.issueNumber));
         let price = 10000.0;
@@ -195,7 +209,7 @@
             const wick = Math.abs(body) * 0.2;
             price = close;
             return {
-                time: idx,
+                time: idx, // Using simple index for time
                 open: open,
                 close: close,
                 high: Math.max(open, close) + wick,
@@ -205,7 +219,7 @@
         });
     }
 
-    // --- 2. TA METHODS (FROM INDEX.HTML) ---
+    // --- 2. TA METHODS ---
     function findSRLevels(candles, lookback) {
         const levels = [];
         for (let i = lookback; i < candles.length - lookback; i++) {
@@ -290,7 +304,6 @@
         const tb = trendBreakoutSignal(candles);
         const flag = flagPatternSignal(candles);
 
-        // Update TA UI
         function formatTA(v, n) {
             if(v === 0) return `<span class="neutral-text">Neutral</span>`;
             return `<span class="${v > 0 ? 'up-text' : 'down-text'}">${n || 'Active'}</span>`;
@@ -299,9 +312,8 @@
         document.getElementById('taTB').innerHTML = formatTA(tb.vote, tb.note);
         document.getElementById('taFlag').innerHTML = formatTA(flag.vote, flag.note);
 
-        // WEIGHTS: S/R=3, Trend=3, Flag=4
         const totalVote = (sr.vote * 3) + (tb.vote * 3) + (flag.vote * 4);
-        const maxVote = (2 * 3) + (2 * 3) + (2 * 4); // 20
+        const maxVote = (2 * 3) + (2 * 3) + (2 * 4);
         
         let side = "WAIT";
         if (totalVote > 0) side = "BIG";
@@ -314,8 +326,9 @@
     // --- MAIN API LOOP ---
     async function mainLoop() {
         try {
-            const url = `${API_URL}?pageSize=50&pageNo=1&ts=${Date.now()}`;
-            const res = await fetch(url);
+            // Using CORS proxy to fetch safely on frontend
+            const targetUrl = `${API_URL}?pageSize=50&pageNo=1&ts=${Date.now()}`;
+            const res = await fetch(CORS_PROXY + encodeURIComponent(targetUrl));
             const json = await res.json();
             const dataList = json.data.list;
 
@@ -326,9 +339,12 @@
 
             document.getElementById('nextPeriod').textContent = next_p;
             
-            // Build Candles & Update Chart
+            // Build Candles
             processedCandles = buildCandles(Object.values(state.history));
             candleSeries.setData(processedCandles);
+
+            // Set visible range to end
+            chart.timeScale().fitContent();
 
             // Latest Result UI
             const latestData = state.history[latest_p];
@@ -364,7 +380,6 @@
                     state.current_prediction = { period: next_p, ...pred };
                     state.predictions_memory[next_p] = pred.side;
                     
-                    // Update Top Badges
                     const sigEl = document.getElementById('topSignal');
                     sigEl.textContent = `AI SIGNAL: ${pred.side}`;
                     sigEl.style.borderColor = pred.side === 'BIG' ? 'var(--color-up)' : 'var(--color-down)';
@@ -374,11 +389,11 @@
                 }
             }
 
-            // Update Stats & History
             updateDashboard();
 
         } catch(e) {
             console.error("API Fetch Error:", e);
+            document.getElementById('topSignal').textContent = "CONNECTION ERROR";
         }
     }
 
@@ -436,7 +451,7 @@
     // Bootstrap
     initChart();
     mainLoop();
-    setInterval(mainLoop, 5000); // 5 seconds interval
+    setInterval(mainLoop, 5000); 
 </script>
 </body>
 </html>
