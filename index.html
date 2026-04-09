@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRX Candle Chart - Pro Dashboard</title>
+    <title>TRX Candle Chart - Pro Engine</title>
     <script src="lightweight-charts.standalone.production.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-main: #0b0e11;
             --bg-panel: #181a20;
-            --bg-hover: #2b3139;
             --text-main: #eaecef;
             --text-muted: #848e9c;
             --color-up: #0ecb81;
@@ -18,148 +17,65 @@
             --border-color: #2b3139;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Roboto Mono', monospace;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto Mono', monospace; }
+        body { background-color: var(--bg-main); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* --- Header --- */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: var(--bg-panel);
-            border-bottom: 1px solid var(--border-color);
-            height: 60px;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .title {
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .legend span {
-            font-size: 12px;
-            margin-right: 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .legend .big::before { content: "■"; color: var(--color-up); }
-        .legend .small::before { content: "■"; color: var(--color-down); }
-
+        /* Header */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); height: 60px; }
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        .title { font-size: 18px; font-weight: 700; color: #fCD535;}
         .header-center { display: flex; gap: 15px; }
         .badge { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; border: 1px solid;}
-        .badge.pattern { border-color: var(--color-down); color: var(--color-down); background: rgba(246, 70, 93, 0.1); }
-        .badge.signal { border-color: var(--color-up); color: var(--color-up); background: rgba(14, 203, 129, 0.1); }
-
-        /* --- Main Layout --- */
-        .main-container {
-            display: flex;
-            flex: 1;
-            height: calc(100vh - 60px);
-        }
-
-        /* --- Left Floating Panel (Info) --- */
-        .left-panel {
-            width: 250px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            border-right: 1px solid var(--border-color);
-            background: var(--bg-main);
-        }
-
-        .timer-box .label { font-size: 10px; color: var(--text-muted); }
-        .timer-box .value { font-size: 16px; font-weight: bold; margin-top: 5px; color: #fCD535; }
-        .timer-box .countdown { font-size: 24px; font-weight: bold; color: var(--color-up); margin-top: 5px; }
-
-        .info-card {
-            background: var(--bg-panel);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 15px;
-        }
-
+        
+        /* Main Layout */
+        .main-container { display: flex; flex: 1; height: calc(100vh - 60px); }
+        
+        /* Left Panel */
+        .left-panel { width: 260px; padding: 15px; display: flex; flex-direction: column; gap: 15px; border-right: 1px solid var(--border-color); background: var(--bg-main); overflow-y: auto;}
+        .timer-box { text-align: center; background: var(--bg-panel); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);}
+        .timer-box .label { font-size: 11px; color: var(--text-muted); }
+        .timer-box .value { font-size: 18px; font-weight: bold; margin-top: 5px; color: #fff; }
+        .timer-box .countdown { font-size: 28px; font-weight: bold; color: var(--color-up); margin-top: 5px; }
+        
+        .info-card { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
         .info-card h4 { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;}
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; margin-bottom:10px; }
-        .grid-2 div span { display: block; color: var(--text-muted); font-size: 10px; }
-        .grid-2 div strong { color: var(--text-main); }
+        .ta-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 8px; }
+        .ta-row span:first-child { color: var(--text-muted); }
         
         .up-text { color: var(--color-up) !important; }
         .down-text { color: var(--color-down) !important; }
+        .neutral-text { color: var(--text-muted) !important; }
 
-        /* --- Chart Area --- */
-        .chart-container {
-            flex: 1;
-            position: relative;
-            background: var(--bg-main);
-        }
+        /* Chart Area */
+        .chart-container { flex: 1; position: relative; }
         #tvChart { position: absolute; width: 100%; height: 100%; }
 
-        /* --- Right Panel (Stats & History) --- */
-        .right-panel {
-            width: 320px;
-            background: var(--bg-panel);
-            border-left: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .stats-section { padding: 20px; border-bottom: 1px solid var(--border-color); }
-        .stats-section h3 { font-size: 12px; color: var(--text-muted); margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
-        
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-bottom: 15px; }
+        /* Right Panel */
+        .right-panel { width: 320px; background: var(--bg-panel); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .stats-section { padding: 15px; border-bottom: 1px solid var(--border-color); }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
         .stat-box { background: var(--bg-main); padding: 10px 5px; border-radius: 6px; border: 1px solid var(--border-color); }
-        .stat-box .val { font-size: 18px; font-weight: bold; margin-top: 5px; }
-        .stat-box .lbl { font-size: 10px; color: var(--text-muted); }
+        .stat-box .val { font-size: 16px; font-weight: bold; margin-bottom: 3px; }
+        .stat-box .lbl { font-size: 9px; color: var(--text-muted); }
 
         .history-section { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .history-section h3 { font-size: 12px; color: var(--text-muted); padding: 15px 20px 5px; }
-        
-        .table-header { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding: 10px 20px; font-size: 10px; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
+        .history-section h3 { font-size: 12px; color: var(--text-muted); padding: 15px 15px 5px; }
+        .table-header { display: grid; grid-template-columns: 2fr 1.5fr 1.5fr 1fr; padding: 10px 15px; font-size: 10px; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
         .history-list { flex: 1; overflow-y: auto; }
         .history-list::-webkit-scrollbar { width: 4px; }
         .history-list::-webkit-scrollbar-thumb { background: var(--border-color); }
-        
-        .history-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding: 10px 20px; font-size: 11px; border-bottom: 1px solid var(--border-color); align-items: center; }
-        .history-row:hover { background: var(--bg-main); }
+        .history-row { display: grid; grid-template-columns: 2fr 1.5fr 1.5fr 1fr; padding: 10px 15px; font-size: 11px; border-bottom: 1px solid var(--border-color); align-items: center; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="header-left">
-            <div class="title">TRX CANDLE CHART</div>
-            <div class="legend">
-                <span class="big">BIG (5-9)</span>
-                <span class="small">SMALL (0-4)</span>
-            </div>
+            <div class="title">GUARDIAN TRX PRO</div>
         </div>
         <div class="header-center">
-            <div class="badge pattern" id="topPattern">AWAITING DATA</div>
-            <div class="badge signal" id="topSignal">AI SIGNAL: WAIT</div>
+            <div class="badge" id="topConf" style="border-color: #fCD535; color: #fCD535;">CONF: 0%</div>
+            <div class="badge" id="topSignal" style="border-color: var(--text-muted); color: var(--text-muted);">AI: WAITING</div>
         </div>
     </header>
 
@@ -168,29 +84,35 @@
             <div class="timer-box">
                 <div class="label">NEXT PERIOD</div>
                 <div class="value" id="nextPeriod">---</div>
-                <div class="label" style="margin-top:15px;">COUNTDOWN</div>
+                <div class="label" style="margin-top:10px;">COUNTDOWN</div>
                 <div class="countdown" id="countdownTimer">00:00</div>
             </div>
 
             <div class="info-card">
-                <h4>≡ OHLC</h4>
-                <div class="grid-2">
-                    <div><span>OPEN</span><strong id="cOpen">0.00</strong></div>
-                    <div><span>HIGH</span><strong id="cHigh">0.00</strong></div>
-                    <div><span>LOW</span><strong id="cLow">0.00</strong></div>
-                    <div><span>CLOSE</span><strong id="cClose">0.00</strong></div>
+                <h4>≡ TA SIGNALS (HTML LOGIC)</h4>
+                <div class="ta-row">
+                    <span>S/R Logic</span>
+                    <strong id="taSR">-</strong>
                 </div>
-                
-                <h4># NUMBER & RESULT</h4>
-                <div class="grid-2">
-                    <div><span>DIGIT</span><strong id="cDigit">-</strong></div>
-                    <div><span>RESULT</span><strong id="cResult">-</strong></div>
+                <div class="ta-row">
+                    <span>Trend Break</span>
+                    <strong id="taTB">-</strong>
                 </div>
+                <div class="ta-row">
+                    <span>Flag Pattern</span>
+                    <strong id="taFlag">-</strong>
+                </div>
+            </div>
 
-                <h4>~ TA SIGNALS</h4>
-                <div class="grid-2">
-                    <div><span>TREND</span><strong id="cTrend">-</strong></div>
-                    <div><span>CONFIDENCE</span><strong id="cMomentum">-</strong></div>
+            <div class="info-card">
+                <h4>≡ LATEST RESULT</h4>
+                <div class="ta-row">
+                    <span>Digit</span>
+                    <strong id="cDigit">-</strong>
+                </div>
+                <div class="ta-row">
+                    <span>Result</span>
+                    <strong id="cResult">-</strong>
                 </div>
             </div>
         </aside>
@@ -201,51 +123,31 @@
 
         <aside class="right-panel">
             <div class="stats-section">
-                <h3>📊 PERFORMANCE STATS</h3>
                 <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="lbl">WINS</div>
-                        <div class="val up-text" id="stWins">0</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="lbl">LOSSES</div>
-                        <div class="val down-text" id="stLosses">0</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="lbl">WIN RATE</div>
-                        <div class="val" id="stRate">0%</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="lbl">TOTAL PRED.</div>
-                        <div class="val" id="stTotal">0</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="lbl">BEST STREAK</div>
-                        <div class="val up-text" id="stBest">0</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="lbl">WORST STREAK</div>
-                        <div class="val down-text" id="stWorst">0</div>
-                    </div>
+                    <div class="stat-box"><div class="val up-text" id="stWins">0</div><div class="lbl">WINS</div></div>
+                    <div class="stat-box"><div class="val down-text" id="stLosses">0</div><div class="lbl">LOSSES</div></div>
+                    <div class="stat-box"><div class="val" id="stRate">0%</div><div class="lbl">WIN RATE</div></div>
+                    <div class="stat-box"><div class="val" id="stTotal">0</div><div class="lbl">TOTAL</div></div>
+                    <div class="stat-box"><div class="val up-text" id="stBest">0</div><div class="lbl">MAX WIN</div></div>
+                    <div class="stat-box"><div class="val down-text" id="stWorst">0</div><div class="lbl">MAX LOSS</div></div>
                 </div>
             </div>
 
             <div class="history-section">
-                <h3>↺ PREDICTION HISTORY</h3>
+                <h3>↺ LIVE PREDICTIONS</h3>
                 <div class="table-header">
                     <div>PERIOD</div>
                     <div>PREDICT</div>
                     <div>ACTUAL</div>
-                    <div>STATUS</div>
+                    <div>W/L</div>
                 </div>
-                <div class="history-list" id="historyList">
-                    </div>
+                <div class="history-list" id="historyList"></div>
             </div>
         </aside>
     </div>
 
 <script>
-    // --- Global State based on Python Logic ---
+    // --- GLOBAL STATE ---
     const state = {
         history: {},
         total_wins: 0,
@@ -259,177 +161,184 @@
         current_prediction: { period: null, side: null, conf: 0, note: "Analyzing..." }
     };
 
-    let chart, candleSeries, smaFast, smaSlow;
-    let processedCandles = [];
     const API_URL = "https://draw.ar-lottery01.com/TrxWinGo/TrxWinGo_1M/GetHistoryIssuePage.json";
+    let chart, candleSeries;
+    let processedCandles = [];
 
-    // --- Chart Initialization ---
+    // --- CHART INIT ---
     function initChart() {
-        const chartContainer = document.getElementById('tvChart');
-        chart = LightweightCharts.createChart(chartContainer, {
+        const wrap = document.getElementById('tvChart');
+        chart = LightweightCharts.createChart(wrap, {
             layout: { background: { color: '#0b0e11' }, textColor: '#848e9c' },
             grid: { vertLines: { color: '#1f2933' }, horzLines: { color: '#1f2933' } },
             crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
             rightPriceScale: { borderColor: '#2b3139' },
-            timeScale: { borderColor: '#2b3139', timeVisible: true, rightOffset: 10 },
+            timeScale: { borderColor: '#2b3139', timeVisible: true }
         });
-
         candleSeries = chart.addCandlestickSeries({
             upColor: '#0ecb81', downColor: '#f6465d',
             borderUpColor: '#0ecb81', borderDownColor: '#f6465d',
             wickUpColor: '#0ecb81', wickDownColor: '#f6465d'
         });
-
-        // Add Moving Averages like in the picture
-        smaFast = chart.addLineSeries({ color: '#00bcd4', lineWidth: 2, crosshairMarkerVisible: false });
-        smaSlow = chart.addLineSeries({ color: '#ff9800', lineWidth: 2, crosshairMarkerVisible: false });
-
-        new ResizeObserver(() => chart.resize(chartContainer.clientWidth, chartContainer.clientHeight)).observe(chartContainer);
+        new ResizeObserver(() => chart.resize(wrap.clientWidth, wrap.clientHeight)).observe(wrap);
     }
 
-    // --- Data Processing (Python Logic Translation) ---
-    function processDataToCandles(list) {
-        const sorted = list.slice().sort((a, b) => parseInt(a.issueNumber) - parseInt(b.issueNumber));
+    // --- 1. CANDLE BUILDER (FROM PYTHON logic) ---
+    function buildCandles(dataList) {
+        const sorted = dataList.slice().sort((a, b) => parseInt(a.issueNumber) - parseInt(b.issueNumber));
         let price = 10000.0;
-        const candles = [];
-        const fastMAData = [];
-        const slowMAData = [];
-
-        sorted.forEach((item, index) => {
-            const num = parseInt(item.number);
-            const is_big = num >= 5;
-            const body = is_big ? 0.02 : -0.02;
+        return sorted.map((item, idx) => {
+            const isBig = parseInt(item.number) >= 5;
+            const body = isBig ? 0.02 : -0.02;
             const open = price;
             const close = price + body;
             const wick = Math.abs(body) * 0.2;
-            
             price = close;
-            const time = index; // Simple index for timeframe
-
-            candles.push({ time, open, close, high: Math.max(open, close) + wick, low: Math.min(open, close) - wick });
-            
-            // Simple SMA Calculation
-            if(index >= 5) fastMAData.push({ time, value: candles.slice(index-5, index+1).reduce((s, c) => s + c.close, 0) / 6 });
-            if(index >= 14) slowMAData.push({ time, value: candles.slice(index-14, index+1).reduce((s, c) => s + c.close, 0) / 15 });
+            return {
+                time: idx,
+                open: open,
+                close: close,
+                high: Math.max(open, close) + wick,
+                low: Math.min(open, close) - wick,
+                issue: item.issueNumber
+            };
         });
-
-        return { candles, fastMAData, slowMAData };
     }
 
-    // --- Simple Prediction Logic (From Python) ---
-    function getPrediction(candles) {
-        if(candles.length < 15) return { side: 'WAIT', conf: 0, note: 'Data loading' };
-        
-        const last = candles[candles.length - 1];
-        const last3 = candles.slice(-3);
-        const bullCount = last3.filter(c => c.close > c.open).length;
-        
-        // Simplified Logic for Demo
-        let totalVote = 0;
-        if(bullCount >= 2) totalVote += 2; else totalVote -= 2;
-        if(last.close > last.open) totalVote += 1; else totalVote -= 1;
-
-        const conf = Math.min(Math.floor(50 + (Math.abs(totalVote)/4)*45), 95);
-        const side = totalVote > 0 ? "BIG" : "SMALL";
-        const note = totalVote > 0 ? "Bullish Trend" : "Bearish Trend";
-
-        return { side, conf, note };
-    }
-
-    // --- Update UI ---
-    function updateUI(latestData) {
-        const num = parseInt(latestData.number);
-        const isBig = num >= 5;
-        const resultText = isBig ? "BIG" : "SMALL";
-        const resultClass = isBig ? "up-text" : "down-text";
-
-        // Update Left Info Box
-        document.getElementById('cDigit').textContent = num;
-        const resEl = document.getElementById('cResult');
-        resEl.textContent = resultText;
-        resEl.className = resultClass;
-
-        // Update Stats
-        const total = state.total_wins + state.total_losses;
-        const rate = total > 0 ? ((state.total_wins / total) * 100).toFixed(1) : 0;
-        
-        document.getElementById('stWins').textContent = state.total_wins;
-        document.getElementById('stLosses').textContent = state.total_losses;
-        document.getElementById('stRate').textContent = rate + '%';
-        document.getElementById('stTotal').textContent = total;
-        document.getElementById('stBest').textContent = state.max_win_streak;
-        document.getElementById('stWorst').textContent = state.max_loss_streak;
-
-        // Render History Table
-        renderHistoryTable();
-    }
-
-    function renderHistoryTable() {
-        const listEl = document.getElementById('historyList');
-        listEl.innerHTML = '';
-        
-        const sortedHist = Object.values(state.history).sort((a,b) => parseInt(b.issueNumber) - parseInt(a.issueNumber));
-        
-        sortedHist.slice(0, 30).forEach(item => {
-            const p = item.issueNumber;
-            const actualSide = parseInt(item.number) >= 5 ? "BIG" : "SMALL";
-            const actualClass = actualSide === "BIG" ? "up-text" : "down-text";
-            
-            let pred = "-";
-            let statusIcon = "⏳";
-            
-            if(state.predictions_memory[p]) {
-                pred = state.predictions_memory[p];
-                if(pred === actualSide) {
-                    statusIcon = "✅";
-                } else {
-                    statusIcon = "❌";
-                }
+    // --- 2. TA METHODS (FROM INDEX.HTML) ---
+    function findSRLevels(candles, lookback) {
+        const levels = [];
+        for (let i = lookback; i < candles.length - lookback; i++) {
+            const c = candles[i];
+            let isSwingH = true, isSwingL = true;
+            for (let j = 1; j <= lookback; j++) {
+                if (candles[i-j].high >= c.high || candles[i+j].high >= c.high) isSwingH = false;
+                if (candles[i-j].low <= c.low || candles[i+j].low <= c.low) isSwingL = false;
             }
-
-            const predClass = pred === "BIG" ? "up-text" : (pred === "SMALL" ? "down-text" : "");
-
-            const row = document.createElement('div');
-            row.className = 'history-row';
-            row.innerHTML = `
-                <div>${p.slice(0,3)}**${p.slice(-4)}</div>
-                <div class="${predClass}">${pred}</div>
-                <div class="${actualClass}">${actualSide}</div>
-                <div>${statusIcon}</div>
-            `;
-            listEl.appendChild(row);
-        });
+            if (isSwingH) levels.push({ price: c.high, type: 'R' });
+            if (isSwingL) levels.push({ price: c.low, type: 'S' });
+        }
+        return levels;
     }
 
-    // --- Main Fetch Loop ---
-    async function fetchLoop() {
+    function srSignal(candles) {
+        if (candles.length < 20) return { vote: 0, note: '' };
+        const levels = findSRLevels(candles.slice(-60), 3);
+        const last = candles[candles.length - 1];
+        const price = last.close;
+        const range = Math.abs(last.high - last.low) * 3;
+
+        let nearR = levels.filter(l => l.type === 'R' && Math.abs(l.price - price) < range);
+        let nearS = levels.filter(l => l.type === 'S' && Math.abs(l.price - price) < range);
+        let brokeR = levels.filter(l => l.type === 'R' && last.open < l.price && last.close > l.price);
+        let brokeS = levels.filter(l => l.type === 'S' && last.open > l.price && last.close < l.price);
+
+        if (brokeR.length) return { vote: +2, note: 'R Breakout ↑' };
+        if (brokeS.length) return { vote: -2, note: 'S Breakdown ↓' };
+        if (nearR.length) return { vote: -1, note: 'Near Resistance' };
+        if (nearS.length) return { vote: +1, note: 'Near Support' };
+        return { vote: 0, note: '' };
+    }
+
+    function trendBreakoutSignal(candles) {
+        if (candles.length < 15) return { vote: 0, note: '' };
+        const n = 15;
+        const seg = candles.slice(-n);
+        let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+        seg.forEach((c, i) => { sumX += i; sumY += c.close; sumXY += i * c.close; sumX2 += i * i; });
+        const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+
+        const last3 = candles.slice(-3);
+        const bullMomentum = last3.every(c => c.close > c.open);
+        const bearMomentum = last3.every(c => c.close < c.open);
+        const last = candles[candles.length - 1];
+        const candleIsBull = last.close > last.open;
+        const candleIsBear = last.close < last.open;
+
+        if (slope < 0 && candleIsBull && bullMomentum) return { vote: +2, note: 'Downtrend Break ↑' };
+        if (slope > 0 && candleIsBear && bearMomentum) return { vote: -2, note: 'Uptrend Break ↓' };
+        if (slope > 0 && candleIsBull) return { vote: +1, note: 'Uptrend Cont.' };
+        if (slope < 0 && candleIsBear) return { vote: -1, note: 'Downtrend Cont.' };
+        return { vote: 0, note: '' };
+    }
+
+    function flagPatternSignal(candles) {
+        if (candles.length < 12) return { vote: 0, note: '' };
+        const pole = candles.slice(-12, -5);
+        const flag = candles.slice(-5);
+        const poleBull = pole.filter(c => c.close > c.open).length;
+        const poleBear = pole.filter(c => c.close < c.open).length;
+        const poleIsBull = poleBull > poleBear;
+        const poleIsBear = poleBear > poleBull;
+
+        const flagBull = flag.filter(c => c.close > c.open).length;
+        const flagBear = flag.filter(c => c.close < c.open).length;
+        const flagCounter = poleIsBull ? flagBear >= 2 : flagBull >= 2;
+        const last = candles[candles.length - 1];
+
+        if (poleIsBull && flagCounter && last.close > last.open) return { vote: +2, note: 'Bull Flag ↑' };
+        if (poleIsBear && flagCounter && last.close < last.open) return { vote: -2, note: 'Bear Flag ↓' };
+        if (poleIsBull && flagCounter) return { vote: +1, note: 'Bull Flag Form' };
+        if (poleIsBear && flagCounter) return { vote: -1, note: 'Bear Flag Form' };
+        return { vote: 0, note: '' };
+    }
+
+    function executeProPrediction(candles) {
+        if (candles.length < 15) return null;
+        
+        const sr = srSignal(candles);
+        const tb = trendBreakoutSignal(candles);
+        const flag = flagPatternSignal(candles);
+
+        // Update TA UI
+        function formatTA(v, n) {
+            if(v === 0) return `<span class="neutral-text">Neutral</span>`;
+            return `<span class="${v > 0 ? 'up-text' : 'down-text'}">${n || 'Active'}</span>`;
+        }
+        document.getElementById('taSR').innerHTML = formatTA(sr.vote, sr.note);
+        document.getElementById('taTB').innerHTML = formatTA(tb.vote, tb.note);
+        document.getElementById('taFlag').innerHTML = formatTA(flag.vote, flag.note);
+
+        // WEIGHTS: S/R=3, Trend=3, Flag=4
+        const totalVote = (sr.vote * 3) + (tb.vote * 3) + (flag.vote * 4);
+        const maxVote = (2 * 3) + (2 * 3) + (2 * 4); // 20
+        
+        let side = "WAIT";
+        if (totalVote > 0) side = "BIG";
+        else if (totalVote < 0) side = "SMALL";
+
+        const conf = Math.min(Math.floor(50 + (Math.abs(totalVote) / maxVote) * 45), 95);
+        return { side, conf };
+    }
+
+    // --- MAIN API LOOP ---
+    async function mainLoop() {
         try {
-            const res = await fetch(`${API_URL}?pageSize=50&pageNo=1&ts=${Date.now()}`);
+            const url = `${API_URL}?pageSize=50&pageNo=1&ts=${Date.now()}`;
+            const res = await fetch(url);
             const json = await res.json();
             const dataList = json.data.list;
 
-            // Update History Dictionary
             dataList.forEach(i => state.history[i.issueNumber] = i);
             const sortedKeys = Object.keys(state.history).sort((a,b) => parseInt(b) - parseInt(a));
             const latest_p = sortedKeys[0];
             const next_p = (BigInt(latest_p) + 1n).toString();
 
             document.getElementById('nextPeriod').textContent = next_p;
+            
+            // Build Candles & Update Chart
+            processedCandles = buildCandles(Object.values(state.history));
+            candleSeries.setData(processedCandles);
 
-            // Generate Candles & Update Chart
-            const chartData = processDataToCandles(Object.values(state.history));
-            candleSeries.setData(chartData.candles);
-            smaFast.setData(chartData.fastMAData);
-            smaSlow.setData(chartData.slowMAData);
+            // Latest Result UI
+            const latestData = state.history[latest_p];
+            const num = parseInt(latestData.number);
+            const isBig = num >= 5;
+            document.getElementById('cDigit').textContent = num;
+            document.getElementById('cResult').textContent = isBig ? "BIG" : "SMALL";
+            document.getElementById('cResult').className = isBig ? "up-text" : "down-text";
 
-            // Update OHLC box with last candle
-            const lastC = chartData.candles[chartData.candles.length - 1];
-            document.getElementById('cOpen').textContent = lastC.open.toFixed(2);
-            document.getElementById('cHigh').textContent = lastC.high.toFixed(2);
-            document.getElementById('cLow').textContent = lastC.low.toFixed(2);
-            document.getElementById('cClose').textContent = lastC.close.toFixed(2);
-
-            // Win/Loss Calculation (Python Logic)
+            // Win/Loss Calculation
             sortedKeys.forEach(p => {
                 if(state.predictions_memory[p] && !state.processed_periods.has(p)) {
                     const actualSide = parseInt(state.history[p].number) >= 5 ? "BIG" : "SMALL";
@@ -448,30 +357,75 @@
                 }
             });
 
-            // Make New Prediction
+            // Make Prediction
             if (state.current_prediction.period !== next_p) {
-                const pred = getPrediction(chartData.candles);
-                state.current_prediction = { period: next_p, ...pred };
-                if (pred.side !== 'WAIT') state.predictions_memory[next_p] = pred.side;
-
-                // Update Top Signal UI
-                const sigEl = document.getElementById('topSignal');
-                sigEl.textContent = `AI SIGNAL: BUY -> ${pred.side}`;
-                sigEl.className = `badge signal ${pred.side === 'SMALL' ? 'pattern' : ''}`; // Use red class for small
-
-                document.getElementById('cTrend').textContent = pred.note;
-                document.getElementById('cMomentum').textContent = pred.conf + "%";
-                document.getElementById('topPattern').textContent = pred.conf > 80 ? "STRONG TREND" : "CONSOLIDATION";
+                const pred = executeProPrediction(processedCandles);
+                if(pred && pred.side !== "WAIT") {
+                    state.current_prediction = { period: next_p, ...pred };
+                    state.predictions_memory[next_p] = pred.side;
+                    
+                    // Update Top Badges
+                    const sigEl = document.getElementById('topSignal');
+                    sigEl.textContent = `AI SIGNAL: ${pred.side}`;
+                    sigEl.style.borderColor = pred.side === 'BIG' ? 'var(--color-up)' : 'var(--color-down)';
+                    sigEl.style.color = pred.side === 'BIG' ? 'var(--color-up)' : 'var(--color-down)';
+                    
+                    document.getElementById('topConf').textContent = `CONF: ${pred.conf}%`;
+                }
             }
 
-            updateUI(state.history[latest_p]);
+            // Update Stats & History
+            updateDashboard();
 
-        } catch (e) {
+        } catch(e) {
             console.error("API Fetch Error:", e);
         }
     }
 
-    // --- Clock/Timer ---
+    function updateDashboard() {
+        const total = state.total_wins + state.total_losses;
+        const rate = total > 0 ? ((state.total_wins / total) * 100).toFixed(1) : 0;
+        
+        document.getElementById('stWins').textContent = state.total_wins;
+        document.getElementById('stLosses').textContent = state.total_losses;
+        document.getElementById('stRate').textContent = rate + '%';
+        document.getElementById('stTotal').textContent = total;
+        document.getElementById('stBest').textContent = state.max_win_streak;
+        document.getElementById('stWorst').textContent = state.max_loss_streak;
+
+        const listEl = document.getElementById('historyList');
+        listEl.innerHTML = '';
+        
+        const sortedHist = Object.values(state.history).sort((a,b) => parseInt(b.issueNumber) - parseInt(a.issueNumber));
+        
+        sortedHist.slice(0, 30).forEach(item => {
+            const p = item.issueNumber;
+            const actualSide = parseInt(item.number) >= 5 ? "BIG" : "SMALL";
+            const actualClass = actualSide === "BIG" ? "up-text" : "down-text";
+            
+            let pred = "-";
+            let statusIcon = "⏳";
+            
+            if(state.predictions_memory[p]) {
+                pred = state.predictions_memory[p];
+                statusIcon = (pred === actualSide) ? "✅" : "❌";
+            }
+
+            const predClass = pred === "BIG" ? "up-text" : (pred === "SMALL" ? "down-text" : "neutral-text");
+
+            const row = document.createElement('div');
+            row.className = 'history-row';
+            row.innerHTML = `
+                <div>${p.slice(0,3)}**${p.slice(-4)}</div>
+                <div class="${predClass}">${pred}</div>
+                <div class="${actualClass}">${actualSide}</div>
+                <div>${statusIcon}</div>
+            `;
+            listEl.appendChild(row);
+        });
+    }
+
+    // --- CLOCK ---
     setInterval(() => {
         const now = new Date();
         const seconds = now.getSeconds();
@@ -481,9 +435,8 @@
 
     // Bootstrap
     initChart();
-    fetchLoop();
-    setInterval(fetchLoop, 5000); // Check every 5 seconds like python script
-
+    mainLoop();
+    setInterval(mainLoop, 5000); // 5 seconds interval
 </script>
 </body>
 </html>
